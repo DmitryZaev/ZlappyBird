@@ -58,7 +58,8 @@ class View: UIView {
     
     
     private func animatorConfigure() {
-        collision.translatesReferenceBoundsIntoBoundary = true
+        //collision.translatesReferenceBoundsIntoBoundary = true
+        collision.collisionDelegate = self
         animator.addBehavior(collision)
         
         
@@ -78,7 +79,7 @@ class View: UIView {
                                                    y: 0),
                                      to: CGPoint(x: self.bounds.maxX,
                                                  y: self.bounds.maxY))
-        
+        collisionForBird.collisionDelegate = self
         animator.addBehavior(collisionForBird)
         
         setBirdGravityDirection(direction: .Down)
@@ -134,5 +135,23 @@ class View: UIView {
                 restartButton.frame = restartButton.frame.offsetBy(dx: 0, dy: -200)
             })
         })
+    }
+}
+
+extension View: UICollisionBehaviorDelegate {
+    
+    enum Vibration {
+        static let soft = UIImpactFeedbackGenerator(style: .soft)
+        static let heavy = UIImpactFeedbackGenerator(style: .heavy)
+    }
+    
+    func collisionBehavior(_ behavior: UICollisionBehavior, beganContactFor item1: UIDynamicItem, with item2: UIDynamicItem, at p: CGPoint) {
+        
+        Vibration.heavy.impactOccurred()
+    }
+    
+    func collisionBehavior(_ behavior: UICollisionBehavior, beganContactFor item: UIDynamicItem, withBoundaryIdentifier identifier: NSCopying?, at p: CGPoint) {
+        
+        Vibration.soft.impactOccurred()
     }
 }
